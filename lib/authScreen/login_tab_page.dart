@@ -1,6 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import '../global/global.dart';
+import '../mainScreens/home_screen.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/loading_dialog.dart';
 
 class LoginTabPage extends StatefulWidget {
   const LoginTabPage({Key? key}) : super(key: key);
@@ -14,6 +20,84 @@ class _LoginTabPageState extends State<LoginTabPage> {
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
+  validateForm() {
+    if (emailTextEditingController.text.isEmpty &&
+        passwordTextEditingController.text.isEmpty) {
+      //allow user to login
+
+      Fluttertoast.showToast(msg: "Tolong berikan email dan password");
+    } else {
+      loginNow();
+    }
+  }
+
+  loginNow() async {
+    showDialog(
+        context: context,
+        builder: (c) {
+          return const LoadingDialogWidget(
+            message: "Memeriksa akunmu",
+          );
+        });
+
+    User? currentUser;
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+      email: emailTextEditingController.text.trim(),
+      password: passwordTextEditingController.text.trim(),
+    )
+        .then((auth) {
+      currentUser = auth.user;
+    }).catchError((errorMessage) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Error Occurred: \n $errorMessage");
+    });
+
+    if (currentUser != null) {
+      checkIfUserRecordExists(currentUser!);
+    }
+  }
+
+  checkIfUserRecordExists(User currentUser) async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(currentUser.uid)
+        .get()
+        .then((record) async {
+      if (record.exists) //record exists
+      {
+        //status is approved
+        if (record.data()!["status"] == "approved") {
+          await sharedPreferences!.setString("uid", record.data()!["uid"]);
+          await sharedPreferences!.setString("email", record.data()!["email"]);
+          await sharedPreferences!.setString("name", record.data()!["name"]);
+          await sharedPreferences!
+              .setString("photoUrl", record.data()!["photoUrl"]);
+
+          List<String> userCartList = record.data()!["userCart"].cast<String>();
+          await sharedPreferences!.setStringList("userCart", userCartList);
+          //send user to home screen
+          // ignore: use_build_context_synchronously
+          Navigator.push(
+              context, MaterialPageRoute(builder: (c) => const homeScreen()));
+        } else //status is not approved
+        {
+          FirebaseAuth.instance.signOut();
+          Navigator.pop(context);
+          Fluttertoast.showToast(
+              msg:
+                  "Anda telah di blokir oleh oleh admin. \ncontack Admin: admin@barberapp.com");
+        }
+      } else //record not exists
+      {
+        FirebaseAuth.instance.signOut();
+        Navigator.pop(context);
+        Fluttertoast.showToast(
+            msg: "akun tidak ditemukan, Periksa kembali email dan password.");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -59,7 +143,9 @@ class _LoginTabPageState extends State<LoginTabPage> {
                 vertical: 15,
               ),
             ),
-            onPressed: () {},
+            onPressed: () {
+              validateForm();
+            },
             child: const Text(
               "Login",
               style: TextStyle(

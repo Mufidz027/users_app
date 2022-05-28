@@ -1,7 +1,10 @@
 // ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:users_app/authScreen/auth_screen.dart';
 import 'package:users_app/global/global.dart';
+import 'package:users_app/splashScreen/my_splash_screen.dart';
 
 class MyDrawer extends StatefulWidget {
   @override
@@ -174,7 +177,13 @@ class _MyDrawerState extends State<MyDrawer> {
                     "logout",
                     style: TextStyle(color: Colors.white),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (c) => const MySplashScreen()));
+                  },
                 ),
                 // const Divider(
                 //   height: 10,

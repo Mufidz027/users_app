@@ -31,7 +31,7 @@ class _homeScreenState extends State<homeScreen> {
           ),
         ),
         title: const Text(
-          "THE BarbeR",
+          "Barber App",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,

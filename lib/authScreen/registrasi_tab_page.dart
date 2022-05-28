@@ -11,6 +11,7 @@ import 'package:users_app/widgets/custom_text_field.dart';
 
 // ignore: library_prefixes
 import 'package:firebase_storage/firebase_storage.dart' as fStorage;
+import 'package:users_app/widgets/loading_dialog.dart';
 
 class RegistrasiTabPage extends StatefulWidget {
   const RegistrasiTabPage({Key? key}) : super(key: key);
@@ -53,6 +54,13 @@ class _RegistrasiTabPageState extends State<RegistrasiTabPage> {
             emailTextEditingController.text.isNotEmpty &&
             passwordTextEditingController.text.isNotEmpty &&
             confirmPasswordTextEditingController.text.isNotEmpty) {
+          showDialog(
+              context: context,
+              builder: (c) {
+                return const LoadingDialogWidget(
+                  message: "registring Your Account",
+                );
+              });
           //1.uploud image to storage
           String fileName = DateTime.now().millisecondsSinceEpoch.toString();
           fStorage.Reference storageRef = fStorage.FirebaseStorage.instance
@@ -71,6 +79,7 @@ class _RegistrasiTabPageState extends State<RegistrasiTabPage> {
           //2.save the user info to firebasedatabase
           saveInformationToDatabase();
         } else {
+          Navigator.pop(context);
           Fluttertoast.showToast(
               msg:
                   "Tolong selesaikan pengisian. jangan biarkan form pengisian kosong.");
@@ -94,6 +103,7 @@ class _RegistrasiTabPageState extends State<RegistrasiTabPage> {
         .then((auth) {
       currentUser = auth.user;
     }).catchError((errorMessage) {
+      Navigator.pop(context);
       Fluttertoast.showToast(msg: "Error Occurred: \n $errorMessage");
     });
     if (currentUser != null) {
@@ -120,6 +130,8 @@ class _RegistrasiTabPageState extends State<RegistrasiTabPage> {
         .setString("name", nameTextEditingController.text.trim());
     await sharedPreferences!.setString("photoUrl", downloadUrlImage);
     await sharedPreferences!.setStringList("userCart", ["initialValue"]);
+    // ignore: use_build_context_synchronously
+
     // ignore: use_build_context_synchronously
     Navigator.push(
         context, MaterialPageRoute(builder: (c) => const homeScreen()));
