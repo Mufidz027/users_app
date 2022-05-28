@@ -2,7 +2,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:users_app/authScreen/auth_screen.dart';
 import 'package:users_app/global/global.dart';
 import 'package:users_app/splashScreen/my_splash_screen.dart';
 

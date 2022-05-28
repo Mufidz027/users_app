@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:users_app/splashScreen/my_splash_screen.dart';
 
 import '../global/global.dart';
-import '../mainScreens/home_screen.dart';
+
 import '../widgets/custom_text_field.dart';
 import '../widgets/loading_dialog.dart';
 
@@ -78,8 +79,8 @@ class _LoginTabPageState extends State<LoginTabPage> {
           await sharedPreferences!.setStringList("userCart", userCartList);
           //send user to home screen
           // ignore: use_build_context_synchronously
-          Navigator.push(
-              context, MaterialPageRoute(builder: (c) => const homeScreen()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (c) => const MySplashScreen()));
         } else //status is not approved
         {
           FirebaseAuth.instance.signOut();
