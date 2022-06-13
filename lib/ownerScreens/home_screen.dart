@@ -11,7 +11,7 @@ import 'package:users_app/global/global.dart';
 import 'package:users_app/ownerScreens/owners_ui_design_widget.dart';
 import 'package:users_app/widgets/my_drawer.dart';
 
-import '../models/barber.dart';
+import '../models/barbers.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);

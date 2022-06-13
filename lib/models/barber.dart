@@ -1,25 +1,32 @@
-// ignore_for_file: non_constant_identifier_names
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Owners {
-  String? name;
-  String? uid;
-  String? photoUrl;
-  String? email;
-  String? ratings;
+class Barber {
+  String? barberID;
+  String? barberInfo;
+  String? barberName;
+  Timestamp? publisheDate;
+  String? barberUID;
+  String? status;
+  String? thumbnailUrl;
 
-  Owners({
-    this.name,
-    this.uid,
-    this.photoUrl,
-    this.email,
-    this.ratings,
+  Barber({
+    this.barberID,
+    this.barberInfo,
+    this.barberName,
+    this.publisheDate,
+    this.barberUID,
+    this.status,
+    this.thumbnailUrl,
   });
-
-  Owners.fromJson(Map<String, dynamic> json) {
-    name = json["name"];
-    uid = json["uid"];
-    photoUrl = json["photoUrl"];
-    email = json["email"];
-    ratings = json["ratings"];
+  Barber.fromJson(Map<String, dynamic> json) {
+    barberID = json["barberID"];
+    barberInfo = json["barberInfo"];
+    barberName = json["barberName"];
+    publisheDate = json["publisheDate"];
+    barberUID = json["barberUID"];
+    status = json["status"];
+    thumbnailUrl = json["thumbnailUrl"];
   }
+
+  get uid => null;
 }
